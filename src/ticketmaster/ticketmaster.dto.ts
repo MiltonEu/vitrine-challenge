@@ -1,4 +1,4 @@
-import { IsDateString, IsOptional, IsInt, IsString } from 'class-validator';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class ExportEventsDto {
   @IsDateString()
@@ -8,10 +8,6 @@ export class ExportEventsDto {
   @IsDateString()
   @IsOptional()
   endDateTime: string = '2025-06-30T23:59:59Z';
-
-  @IsInt()
-  @IsOptional()
-  pageSize: number = 200;
 
   @IsString()
   @IsOptional()

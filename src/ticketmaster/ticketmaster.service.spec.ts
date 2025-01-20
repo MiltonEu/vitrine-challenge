@@ -30,7 +30,6 @@ describe(TicketMasterService.name, () => {
       await ticketMasterService.exportEventsToCsv(
         '2025-02-01T00:00:00Z',
         '2025-06-30T23:59:59Z',
-        50,
         'QC',
         'Music',
       );

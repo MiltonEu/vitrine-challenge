@@ -7,6 +7,7 @@ import * as fastCsv from 'fast-csv';
 import { createWriteStream } from 'fs';
 
 const eventsBaseUrl = 'https://app.ticketmaster.com/discovery/v2/events.json';
+const pageSizeDefaultValue = 200;
 
 @Injectable()
 export class TicketMasterService {
@@ -15,14 +16,12 @@ export class TicketMasterService {
   public async exportEventsToCsv(
     startDateTime: string,
     endDateTime: string,
-    pageSize: number,
     stateCode: string,
     segmentName: string | undefined,
   ): Promise<void> {
     const events = await this.searchEvents(
       startDateTime,
       endDateTime,
-      pageSize,
       stateCode,
       segmentName,
     );
@@ -44,9 +43,9 @@ export class TicketMasterService {
   private buildCsv(events: TicketMasterEvent[]): Promise<void> {
     return new Promise((resolve, reject) => {
       const filePath = './events.csv';
-      const csvStream = fastCsv.format({ headers: true });
+      const csvStream = fastCsv.format({ headers: true, writeBOM: true });
 
-      const writableStream = createWriteStream(filePath);
+      const writableStream = createWriteStream(filePath, { encoding: 'utf-8' });
 
       writableStream.on('finish', () => {
         console.log(`CSV file has been written to ${filePath}`);
@@ -84,7 +83,6 @@ export class TicketMasterService {
 
   private async fetchEventsForInterval(
     interval: { start: string; end: string },
-    pageSize: number,
     stateCode: string,
     segmentName: string | undefined,
     currentPage: number,
@@ -97,7 +95,7 @@ export class TicketMasterService {
           segmentName,
           apikey: process.env.TICKETMASTER_API_KEY,
           stateCode,
-          size: pageSize,
+          size: pageSizeDefaultValue,
           page: currentPage,
         },
       }),
@@ -164,7 +162,6 @@ export class TicketMasterService {
   private async searchEvents(
     startDateTime: string,
     endDateTime: string,
-    pageSize: number,
     stateCode: string,
     segmentName: string | undefined,
   ): Promise<TicketMasterEvent[]> {
@@ -183,7 +180,6 @@ export class TicketMasterService {
         try {
           const { events, pageInfo } = await this.fetchEventsForInterval(
             interval,
-            pageSize,
             stateCode,
             segmentName,
             currentPage,

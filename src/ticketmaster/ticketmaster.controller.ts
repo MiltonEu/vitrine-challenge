@@ -11,7 +11,6 @@ export class TicketmasterController {
     this.ticketMasterService.exportEventsToCsv(
       body.startDateTime,
       body.endDateTime,
-      body.pageSize,
       body.stateCode,
       body.segmentName,
     );
